@@ -44,7 +44,7 @@
 			LightOutput += CalculateLight_Point(PointLights[i]);
 		}
 		// Calculate the final color
-		FinalColor = vec4(LightOutput, 1.0f) * texture(ImageTexture0, FragTexCoords);
+		FinalColor =  vec4(LightOutput, 1.0f) * texture(ImageTexture0, FragTexCoords);
 	}
 
 	vec3 CalculateLight_Point(PointLight light)

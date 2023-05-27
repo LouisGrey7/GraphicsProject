@@ -68,6 +68,8 @@ GLuint program_SkyBox;
 GLuint program_GeoVertex;
 GLuint program_QuadTess;
 GLuint program_TriTess;
+GLuint program_Inverse;
+
 
 
 // Cameras
@@ -88,6 +90,9 @@ QuadPatch* quadPatch;
 TrianglePatch* trianglePatch;
 Quad* quadMesh;
 MeshModel* bearMesh;
+MeshModel* dragonMesh;
+Sphere* sphereMesh;
+
 
 //Objects
 Object* starObj;
@@ -95,6 +100,10 @@ Object* quadObj;
 Object* triangleObj;
 Object* screenQuadObj;
 Object* bearObj;
+Object* dragonObj;
+Object* sphereObj;
+
+
 
 
 
@@ -192,6 +201,9 @@ void InitialSetup()
 	program_BlinnPhong = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
 													 "Resources/Shaders/3DLight_BlinnPhong.fs");
 
+	program_Inverse = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
+												  "Resources/Shaders/Texture.fs");
+
 	program_SkyBox = ShaderLoader::CreateProgram("Resources/Shaders/SkyBox.vs",
 												 "Resources/Shaders/SkyBox.fs");
 
@@ -220,7 +232,7 @@ void InitialSetup()
 
 	//LIGHTMANAGER
 	lightManager = new LightManager();
-	lightManager->CreatePointLight(0, glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(0.93f, 0.61f, 1.0f), 0.1f, 2.0f, 1.0f, 0.025f, 0.0075f);
+	lightManager->CreatePointLight(0, glm::vec3(0.0f, 50.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 0.1f, 1.0f, 2.0f, 0.025f, 0.0075f);
 
 	//SKYBOX
 	skyBox = new SkyBox(mainCamera, program_SkyBox, "Clouds", 0);
@@ -231,7 +243,7 @@ void InitialSetup()
 
 	//3D OBJECTS
 	pointMesh = new PointMesh();
-	starObj = new Object(mainCamera, pointMesh, program_GeoVertex, lightManager, glm::vec3(-800.0f, 0.0f, -2000.0f), true, "Sphere.jpg");
+	starObj = new Object(mainCamera, pointMesh, program_GeoVertex, lightManager, glm::vec3(-800.0f, 0.0f, -2400.0f), true, "Sphere.jpg");
 
 	quadPatch = new QuadPatch();
 	quadObj = new Object(mainCamera, quadPatch, program_QuadTess, lightManager, glm::vec3(0.0f, 0.0f, 0.0f), true, "Sphere.jpg");
@@ -240,10 +252,18 @@ void InitialSetup()
 	triangleObj = new Object(mainCamera, trianglePatch, program_TriTess, lightManager, glm::vec3(0.0f, 0.0f, -20.0f), true, "Sphere.jpg");
 
 	quadMesh = new Quad();
-	screenQuadObj = new Object(mainCamera, quadMesh, program_BlinnPhong, lightManager, glm::vec3(0.0f, 0.0f, -30.0f), true, frameBuffer->GetTexture());
+	screenQuadObj = new Object(mainCamera, quadMesh, program_Inverse, lightManager, glm::vec3(0.0f, 0.0f, -40.0f), true, frameBuffer->GetTexture());
 
 	bearMesh = new MeshModel("Resources/Models/Bear/", "Bear.obj");
-	bearObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(0.0f, 0.0f, -100.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
+	bearObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(0.0f, -5.0f, -140.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
+
+	dragonMesh = new MeshModel("Resources/Models/Dragon/", "Dragon.obj");
+	dragonObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(-30.0f, -5.0f, -140.0f), "Resources/Models/Dragon/", "Dragon.obj", "Dragon.png", 0);
+
+
+	sphereMesh = new Sphere(3.0f, 100.0f);
+	sphereObj = new Object(mainCamera, sphereMesh, program_BlinnPhong, lightManager, glm::vec3(30.0f, -5.0f, -140.0f), true, "Sphere.jpg");
+
 
 	glfwGetCursorPos(window, &lastX, &lastY);
 }
@@ -271,7 +291,8 @@ void Update()
 
 	skyBox->Update(deltaTime);
 	bearObj->Update(deltaTime);
-
+	dragonObj->Update(deltaTime);
+	sphereObj->Update(deltaTime);
 }
 
 	
@@ -409,6 +430,8 @@ void Render()
 
 		skyBox->Render();
 		bearObj->Render();
+		dragonObj->Render();
+		sphereObj->Render();
 
 		frameBuffer->Unbind();
 

@@ -188,6 +188,7 @@
     <None Include="Resources\Shaders\3DLight_BlinnPhongRim.fs" />
     <None Include="Resources\Shaders\3D_Terrain.fs" />
     <None Include="Resources\Shaders\Fog.fs" />
+    <None Include="Resources\Shaders\InverseColor.fs" />
     <None Include="Resources\Shaders\Outline.fs" />
     <None Include="Resources\Shaders\Outline.vs" />
     <None Include="Resources\Shaders\3DLight_Phong.fs" />

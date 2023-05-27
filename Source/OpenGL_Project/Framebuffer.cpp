@@ -6,8 +6,6 @@
 Framebuffer::Framebuffer()
 {
 
-
-
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
@@ -17,6 +15,8 @@ Framebuffer::Framebuffer()
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Utils::WindowWidth, Utils::WindowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glGenerateMipmap(GL_TEXTURE_2D);

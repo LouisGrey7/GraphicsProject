@@ -197,6 +197,7 @@
     <None Include="Resources\Shaders\TriTES.tes">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Resources\Shaders\InverseColor.fs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">

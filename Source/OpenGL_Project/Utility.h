@@ -3,7 +3,7 @@
 	namespace Utils
 	{
 
-		const int WindowWidth = 1200;
+		const int WindowWidth = 800;
 		const int WindowHeight = 800;
 
 		
