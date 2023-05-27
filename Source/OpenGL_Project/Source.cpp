@@ -30,6 +30,9 @@
 #include "Quad.h"
 #include "DDDTexture.h"
 #include "PointMesh.h"
+#include "QuadPatch.h"
+#include "TrianglePatch.h"
+#include "Framebuffer.h"
 
 void InitialSetup();
 void Update();
@@ -59,13 +62,13 @@ bool scene3On = false;
 bool wireframeMode = true;
 
 // Programs
-GLuint program_3DTexture;
-GLuint program_LightingBlinnPhongRim;
-GLuint program_LightingBlinnPhong;
-GLuint program_Untextured;
+GLuint program_Texture;
+GLuint program_BlinnPhong;
 GLuint program_SkyBox;
-GLuint program_Outline;
 GLuint program_GeoVertex;
+GLuint program_QuadTess;
+GLuint program_TriTess;
+
 
 // Cameras
 Camera* mainCamera;
@@ -76,13 +79,22 @@ LightManager* lightManager;
 //SkyBox
 SkyBox* skyBox;
 
+//FRAMEBUFFER
+Framebuffer* frameBuffer;
+
 //Meshes
 PointMesh* pointMesh;
-
+QuadPatch* quadPatch;
+TrianglePatch* trianglePatch;
+Quad* quadMesh;
+MeshModel* bearMesh;
 
 //Objects
+Object* starObj;
+Object* quadObj;
 Object* triangleObj;
-
+Object* screenQuadObj;
+Object* bearObj;
 
 
 
@@ -174,12 +186,28 @@ void InitialSetup()
 
 
 	//PROGRAMS
+	program_Texture = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
+												  "Resources/Shaders/Texture.fs");
+
+	program_BlinnPhong = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
+													 "Resources/Shaders/3DLight_BlinnPhong.fs");
+
 	program_SkyBox = ShaderLoader::CreateProgram("Resources/Shaders/SkyBox.vs",
 												 "Resources/Shaders/SkyBox.fs");
 
 	program_GeoVertex = ShaderLoader::CreateProgramVGF("Resources/Shaders/GeoVertex.vs", 
 													   "Resources/Shaders/Star.gs",
 													   "Resources/Shaders/Texture.fs");
+
+	program_QuadTess = ShaderLoader::CreateProgramVTF("Resources/Shaders/PositionOnly.vs",
+														"Resources/Shaders/TCS.tcs",
+														"Resources/Shaders/TES.tes",
+														"Resources/Shaders/Outline.fs");
+
+	program_TriTess = ShaderLoader::CreateProgramVTF("Resources/Shaders/PositionOnly.vs",
+													 "Resources/Shaders/TriTCS.tcs",
+													 "Resources/Shaders/TriTES.tes",
+													 "Resources/Shaders/Outline.fs");
 
 	// DELTATIME
 	previousTimeStep = (float)glfwGetTime();
@@ -197,12 +225,25 @@ void InitialSetup()
 	//SKYBOX
 	skyBox = new SkyBox(mainCamera, program_SkyBox, "Clouds", 0);
 
-	
+	//FRAMEBUFFER
+	frameBuffer = new Framebuffer();
+
 
 	//3D OBJECTS
-
 	pointMesh = new PointMesh();
-	triangleObj = new Object(mainCamera, pointMesh, program_GeoVertex, lightManager, glm::vec3(0.0f, -50.0f, -200.0f), true, "Sphere.jpg");
+	starObj = new Object(mainCamera, pointMesh, program_GeoVertex, lightManager, glm::vec3(-800.0f, 0.0f, -2000.0f), true, "Sphere.jpg");
+
+	quadPatch = new QuadPatch();
+	quadObj = new Object(mainCamera, quadPatch, program_QuadTess, lightManager, glm::vec3(0.0f, 0.0f, 0.0f), true, "Sphere.jpg");
+
+	trianglePatch = new TrianglePatch();
+	triangleObj = new Object(mainCamera, trianglePatch, program_TriTess, lightManager, glm::vec3(0.0f, 0.0f, -20.0f), true, "Sphere.jpg");
+
+	quadMesh = new Quad();
+	screenQuadObj = new Object(mainCamera, quadMesh, program_BlinnPhong, lightManager, glm::vec3(0.0f, 0.0f, -30.0f), true, frameBuffer->GetTexture());
+
+	bearMesh = new MeshModel("Resources/Models/Bear/", "Bear.obj");
+	bearObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(0.0f, 0.0f, -100.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
 
 	glfwGetCursorPos(window, &lastX, &lastY);
 }
@@ -218,13 +259,18 @@ void Update()
 	glfwPollEvents();
 
 	//CAMERA MOVE
-	ProcessInput(deltaTime);
+	//ProcessInput(deltaTime);
 
 	mainCamera->Update(deltaTime);
 
+	starObj->Update(deltaTime);
+
 	triangleObj->Update(deltaTime);
 
+	screenQuadObj->Update(deltaTime);
+
 	skyBox->Update(deltaTime);
+	bearObj->Update(deltaTime);
 
 }
 
@@ -343,22 +389,31 @@ void Render()
 	{
 		skyBox->Render();
 
-		triangleObj->Render();
+		starObj->Render();
 
 	}
 
 	//SCENE 2
 	if (scene2On)
 	{
+		skyBox->Render();
 
-
+		triangleObj->Render();
 
 	}
 
 	//SCENE 3
 	if (scene3On)
 	{
+		frameBuffer->Bind();
 
+		skyBox->Render();
+		bearObj->Render();
+
+		frameBuffer->Unbind();
+
+
+		screenQuadObj->Render();
 	}
 
 
@@ -421,7 +476,7 @@ void Render()
 
 	ImGui::Checkbox("Wireframe Mode", &wireframeMode);
 
-	if (wireframeMode)
+	if (wireframeMode || glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
 	{
 
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

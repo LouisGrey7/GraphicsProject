@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DDDTexture.cpp" />
+    <ClCompile Include="Framebuffer.cpp" />
     <ClCompile Include="IMGUI\imgui.cpp" />
     <ClCompile Include="IMGUI\imgui_demo.cpp" />
     <ClCompile Include="IMGUI\imgui_draw.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TextLabel.cpp" />
+    <ClCompile Include="TrianglePatch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\GeoVertex.vs" />
@@ -201,10 +203,14 @@
     <None Include="Resources\Shaders\SkyBox.fs" />
     <None Include="Resources\Shaders\SkyBox.vs" />
     <None Include="Resources\Shaders\Star.gs" />
+    <None Include="Resources\Shaders\TCS.tcs" />
+    <None Include="Resources\Shaders\TES.tes" />
     <None Include="Resources\Shaders\Text.fs" />
     <None Include="Resources\Shaders\Text.vs" />
     <None Include="Resources\Shaders\Texture.fs" />
     <None Include="Resources\Shaders\TextureMix.fs" />
+    <None Include="Resources\Shaders\TriTCS.tcs" />
+    <None Include="Resources\Shaders\TriTES.tes" />
     <None Include="Resources\Shaders\VertexColor.fs" />
     <None Include="Resources\Shaders\VertexColor.vs" />
     <None Include="Resources\Shaders\VertexColorFade.fs" />
@@ -214,6 +220,7 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DDDTexture.h" />
+    <ClInclude Include="Framebuffer.h" />
     <ClInclude Include="IMGUI\imconfig.h" />
     <ClInclude Include="IMGUI\imgui.h" />
     <ClInclude Include="IMGUI\imgui_impl_glfw.h" />
@@ -231,13 +238,19 @@
     <ClInclude Include="PointMesh.h" />
     <ClInclude Include="Quad.h" />
     <ClInclude Include="QuadPatch.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="VertexPoint.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TextLabel.h" />
+    <ClInclude Include="TrianglePatch.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VertexFormat.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="OpenGL_Project.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

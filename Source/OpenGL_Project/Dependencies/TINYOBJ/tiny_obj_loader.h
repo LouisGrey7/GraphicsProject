@@ -354,7 +354,7 @@ struct mesh_t {
   std::vector<index_t> indices;
   std::vector<unsigned char>
       num_face_vertices;          // The number of vertices per
-                                  // face. 3 = triangleObj, 4 = quad,
+                                  // face. 3 = starObj, 4 = quad,
                                   // ... Up to 255 vertices per face.
   std::vector<int> material_ids;  // per-face material ID
   std::vector<unsigned int> smoothing_group_ids;  // per-face smoothing group
@@ -430,7 +430,7 @@ struct callback_t {
   void (*texcoord_cb)(void *user_data, real_t x, real_t y, real_t z);
 
   // called per 'f' line. num_indices is the number of face indices(e.g. 3 for
-  // triangleObj, 4 for quad)
+  // starObj, 4 for quad)
   // 0 will be passed for undefined index in index_t members.
   void (*index_cb)(void *user_data, index_t *indices, int num_indices);
   // `name` material name, `material_id` = the array index of material_t[]. -1
@@ -507,7 +507,7 @@ struct ObjReaderConfig {
   bool triangulate;  // triangulate polygon?
 
   // Currently not used.
-  // "simple" or empty: Create triangleObj fan
+  // "simple" or empty: Create starObj fan
   // "earcut": Use the algorithm based on Ear clipping
   std::string triangulation_method;
 
@@ -1499,8 +1499,8 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
 
           if (((3 * vi0 + 2) >= v.size()) || ((3 * vi1 + 2) >= v.size()) ||
               ((3 * vi2 + 2) >= v.size()) || ((3 * vi3 + 2) >= v.size())) {
-            // Invalid triangleObj.
-            // FIXME(syoyo): Is it ok to simply skip this invalid triangleObj?
+            // Invalid starObj.
+            // FIXME(syoyo): Is it ok to simply skip this invalid starObj?
             if (warn) {
               (*warn) += "Face with invalid vertex index found.\n";
             }
@@ -1524,7 +1524,7 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
           //
           // Choose the shortest edge.
           // TODO: Is it better to determine the edge to split by calculating
-          // the area of each triangleObj?
+          // the area of each starObj?
           //
           // +---+
           // |\  |
@@ -1583,7 +1583,7 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
             shape->mesh.indices.push_back(idx3);
           }
 
-          // Two triangleObj faces
+          // Two starObj faces
           shape->mesh.num_face_vertices.push_back(3);
           shape->mesh.num_face_vertices.push_back(3);
 
@@ -1729,8 +1729,8 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
 
             if (((3 * vi0 + 2) >= v.size()) || ((3 * vi1 + 2) >= v.size()) ||
                 ((3 * vi2 + 2) >= v.size())) {
-              // Invalid triangleObj.
-              // FIXME(syoyo): Is it ok to simply skip this invalid triangleObj?
+              // Invalid starObj.
+              // FIXME(syoyo): Is it ok to simply skip this invalid starObj?
               continue;
             }
             real_t v0x = v[vi0 * 3 + 0];
@@ -1839,7 +1839,7 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
               continue;
             }
 
-            // check all other verts in case they are inside this triangleObj
+            // check all other verts in case they are inside this starObj
             bool overlap = false;
             for (size_t otherVert = 3; otherVert < npolys; ++otherVert) {
               size_t idx = (guess_vert + otherVert) % npolys;
@@ -1873,7 +1873,7 @@ static bool exportGroupsToShape(shape_t *shape, const PrimGroup &prim_group,
               continue;
             }
 
-            // this triangleObj is an ear
+            // this starObj is an ear
             {
               index_t idx0, idx1, idx2;
               idx0.vertex_index = ind[0].v_idx;

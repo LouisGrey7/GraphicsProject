@@ -8,7 +8,8 @@
 	in vec2 FragTexCoords;
 	in vec3 FragNormal;
 	in vec3 FragPos;
-		//Light Struct
+
+	//Light Struct
 	struct PointLight
 	{
 		vec3 Position;
@@ -19,6 +20,7 @@
 		float AttenuationLinear;
 		float AttenuationExponent;
 	}; 
+
 	// Uniform Inputs
 	uniform sampler2D ImageTexture0;
 	uniform vec3 CameraPos;	

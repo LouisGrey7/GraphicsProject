@@ -10,6 +10,7 @@
 #include "Utility.h"
 #include "Quad.h"
 #include "PointMesh.h"
+#include "QuadPatch.h"
 
 enum ProgramMode
 {
@@ -48,9 +49,8 @@ private:
 	bool m_rimmed = false;
 
 public:
-	Object(Camera* _cam, Sphere* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName);
-	Object(Camera* _cam, Quad* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName);
-	Object(Camera* _cam, PointMesh* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName);
+	Object(Camera* _cam, Mesh* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName);
+	Object(Camera* _cam, Mesh* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, GLuint _textureFileName);
 	Object(Camera* _cam, LightManager* _LM, GLuint _program, glm::vec3 _pos, std::string _folderPath, std::string _meshFileName, std::string _textureFileName, float _fogAmount);
 	Object(Camera* _cam, LightManager* _LM, GLuint _program, glm::vec3 _pos, std::string _folderPath, std::string _meshFileName, std::string _textureFileName, float _fogAmount, GLuint _textureID);
 	~Object();

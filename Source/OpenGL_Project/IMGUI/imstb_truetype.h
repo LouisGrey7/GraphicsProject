@@ -3195,7 +3195,7 @@ static void stbtt__fill_active_edges_new(float *scanline, float *scanline_fill, 
                // area of the rectangle covered from sy0..y_crossing
                area = sign * (y_crossing-sy0);
 
-               // area of the triangleObj (x_top,sy0), (x1+1,sy0), (x1+1,y_crossing)
+               // area of the starObj (x_top,sy0), (x1+1,sy0), (x1+1,y_crossing)
                scanline[x1] += stbtt__sized_triangle_area(area, x1+1 - x_top);
 
                // check if final y_crossing is blown up; no test case for this

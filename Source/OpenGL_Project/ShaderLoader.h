@@ -17,6 +17,6 @@ private:
 public:
 	static GLuint CreateProgram(const char* _vertexShaderFilename, const char* _fragmentShaderFilename);
 	static GLuint CreateProgramVGF(const char* _vertexShaderFilename, const char* _geometryShaderFileName, const char* _fragmentShaderFilename);
-	GLuint CreateProgramVTF(const char* _vertexShaderFilename, const char* _TCSShaderFileName, const char* _TESShaderFileName, const char* _fragmentShaderFilename);
+	static GLuint CreateProgramVTF(const char* _vertexShaderFilename, const char* _TCSShaderFileName, const char* _TESShaderFileName, const char* _fragmentShaderFilename);
 };
 

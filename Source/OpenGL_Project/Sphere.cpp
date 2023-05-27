@@ -61,12 +61,12 @@ Sphere::Sphere(float _radius, int _fidelity)
 	{
 		for (int j = 0; j < _fidelity; j++)
 		{
-			// First triangleObj of the quad
+			// First starObj of the quad
 			indices[element++] = (((i + 1) % _fidelity) * _fidelity) + ((j + 1) % _fidelity);
 			indices[element++] = (i * _fidelity) + (j);
 			indices[element++] = (((i + 1) % _fidelity) * _fidelity) + (j);
 
-			// Second triangleObj of the quad
+			// Second starObj of the quad
 			indices[element++] = (i * _fidelity) + ((j + 1) % _fidelity);
 			indices[element++] = (i * _fidelity) + (j);
 			indices[element++] = (((i + 1) % _fidelity) * _fidelity) + ((j + 1) % _fidelity);

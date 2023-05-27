@@ -1,27 +1,10 @@
 #include "Object.h"
 #include <stb_image.h>
-#include "PointMesh.h"
 
 // Constructor
-Object::Object(Camera* _cam, Sphere* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName)
+Object::Object(Camera* _cam, Mesh* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName)
 {
-	//SPHERE CONSTRUCTOR
-	this->m_sceneCamera = _cam;
-	this->m_mesh = _mesh;
-	this->m_program = _program;
-	this->m_textureID = CreateTexture(_textureFileName);
-	this->m_lightManager = _LM;
-	
-	m_textured = _textured;
-	Position = _pos;
-	m_rotationAngle = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_scale = glm::vec3(2.0f, 2.0f, 2.0f);
-}
-
-Object::Object(Camera* _cam, Quad* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName)
-{
-	//QUAD CONSTRUCTOR
-
+	//MESH CONSTRUCTOR
 	this->m_sceneCamera = _cam;
 	this->m_mesh = _mesh;
 	this->m_program = _program;
@@ -34,20 +17,19 @@ Object::Object(Camera* _cam, Quad* _mesh, GLuint _program, LightManager* _LM, gl
 	m_scale = glm::vec3(2.0f, 2.0f, 2.0f);
 }
 
-Object::Object(Camera* _cam, PointMesh* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, std::string _textureFileName)
+Object::Object(Camera* _cam, Mesh* _mesh, GLuint _program, LightManager* _LM, glm::vec3 _pos, bool _textured, GLuint _textureFileName)
 {
-	//POINT CONSTRUCTOR
-
+	//MESH CONSTRUCTOR
 	this->m_sceneCamera = _cam;
 	this->m_mesh = _mesh;
 	this->m_program = _program;
-	this->m_textureID = CreateTexture(_textureFileName);
+	this->m_textureID = _textureFileName;
 	this->m_lightManager = _LM;
 
 	m_textured = _textured;
 	Position = _pos;
 	m_rotationAngle = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	m_scale = glm::vec3(2.0f, 2.0f, 2.0f);
 }
 
 Object::Object(Camera* _cam, LightManager* _LM, GLuint _program, glm::vec3 _pos, std::string _folderPath, std::string _meshFileName, std::string _textureFileName, float _fogAmount)
