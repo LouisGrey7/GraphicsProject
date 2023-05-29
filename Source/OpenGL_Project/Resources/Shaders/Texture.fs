@@ -16,5 +16,3 @@
 		
 		FinalColor = texture(ImageTexture, FragTexCoords);	// * vec4(FragColor, 1.0f);
 	}
-
-

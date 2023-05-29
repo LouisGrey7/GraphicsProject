@@ -2,7 +2,7 @@
 	#version 460 core
 	
 	// Vertex Shader Inputs
-	in vec3 FragColor;
+
 	in vec2 FragTexCoords;
 
 	// Uniform Inputs
@@ -13,7 +13,6 @@
 
 	void main()
 	{
+		
 		FinalColor = texture(ImageTexture, FragTexCoords);	// * vec4(FragColor, 1.0f);
 	}
-
-

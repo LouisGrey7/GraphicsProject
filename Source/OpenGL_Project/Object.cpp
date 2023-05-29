@@ -29,7 +29,7 @@ Object::Object(Camera* _cam, Mesh* _mesh, GLuint _program, LightManager* _LM, gl
 	m_textured = _textured;
 	Position = _pos;
 	m_rotationAngle = glm::vec3(0.0f, 0.0f, 0.0f);
-	m_scale = glm::vec3(2.0f, 2.0f, 2.0f);
+	m_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 }
 
 Object::Object(Camera* _cam, LightManager* _LM, GLuint _program, glm::vec3 _pos, std::string _folderPath, std::string _meshFileName, std::string _textureFileName, float _fogAmount)

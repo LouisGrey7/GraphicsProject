@@ -7,6 +7,7 @@ TrianglePatch::TrianglePatch()
 	Vertices.push_back(glm::vec3(glm::sin(glm::radians(240.0f)), glm::cos(glm::radians(240.0f)), 0.0f));
 	Vertices.push_back(glm::vec3(glm::sin(glm::radians(120.0f)), glm::cos(glm::radians(120.0f)), 0.0f));
 
+
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 	m_indexCount = (unsigned int)Vertices.size();
 	m_drawType = GL_PATCHES;

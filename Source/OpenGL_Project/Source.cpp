@@ -1,7 +1,4 @@
-
-
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-
 
 #define STB_IMAGE_IMPLEMENTATION
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -39,40 +36,38 @@ void Update();
 void ProcessInput(float deltaTime);
 void Render();
 
-
-
-
-// Variables
+//Variables
 GLFWwindow* window = nullptr;
 
-// Delta Time
+//Delta Time
 float previousTimeStep;
 float currentTimeStep;
 float deltaTime;
 
-// For Mouse Control
+//For Mouse Control
 double lastX = 0;
 double lastY = 0;
 bool cursorOn = true;
 
 //Scene Control
-bool scene1On = false;
-bool scene2On = false;
-bool scene3On = false;
-bool wireframeMode = true;
+bool wireframeMode = false;
 
 // Programs
 GLuint program_Texture;
 GLuint program_BlinnPhong;
 GLuint program_SkyBox;
 GLuint program_GeoVertex;
+GLuint program_GeoVertexNormals;
 GLuint program_QuadTess;
 GLuint program_TriTess;
 GLuint program_Inverse;
+GLuint program_Greyscale;
+GLuint program_Rain;
 
 
 
-// Cameras
+
+//Cameras
 Camera* mainCamera;
 
 //Light Manager
@@ -100,24 +95,38 @@ Object* quadObj;
 Object* triangleObj;
 Object* screenQuadObj;
 Object* bearObj;
+Object* geoBearObj;
 Object* dragonObj;
 Object* sphereObj;
 
 
+enum PostProcessing
+{
+	COLOR,
+	INVERSE,
+	GREYSCALE,
+	RAIN
+};
 
+enum CurrentScene
+{
 
+	SCENE1,
+	SCENE2,
+	SCENE3
 
+};
+
+PostProcessing postProcessing;
+CurrentScene currentScene = SCENE1;
 
 int main()
 {
-
-
 	// Initialize GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-
 
 
 	// Create a GLFW Window
@@ -202,7 +211,13 @@ void InitialSetup()
 													 "Resources/Shaders/3DLight_BlinnPhong.fs");
 
 	program_Inverse = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
-												  "Resources/Shaders/Texture.fs");
+												  "Resources/Shaders/InverseColor.fs");
+
+	program_Greyscale = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
+												  "Resources/Shaders/Greyscale.fs");
+
+	program_Rain = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
+													"Resources/Shaders/Rain.fs");
 
 	program_SkyBox = ShaderLoader::CreateProgram("Resources/Shaders/SkyBox.vs",
 												 "Resources/Shaders/SkyBox.fs");
@@ -210,6 +225,10 @@ void InitialSetup()
 	program_GeoVertex = ShaderLoader::CreateProgramVGF("Resources/Shaders/GeoVertex.vs", 
 													   "Resources/Shaders/Star.gs",
 													   "Resources/Shaders/Texture.fs");
+
+	//program_GeoVertexNormals = ShaderLoader::CreateProgramVGF("Resources/Shaders/GeoVertNorm.vs",
+															  //"Resources/Shaders/ModelGeo.gs",
+														      //"Resources/Shaders/Texture.fs");
 
 	program_QuadTess = ShaderLoader::CreateProgramVTF("Resources/Shaders/PositionOnly.vs",
 														"Resources/Shaders/TCS.tcs",
@@ -246,16 +265,17 @@ void InitialSetup()
 	starObj = new Object(mainCamera, pointMesh, program_GeoVertex, lightManager, glm::vec3(-800.0f, 0.0f, -2400.0f), true, "Sphere.jpg");
 
 	quadPatch = new QuadPatch();
-	quadObj = new Object(mainCamera, quadPatch, program_QuadTess, lightManager, glm::vec3(0.0f, 0.0f, 0.0f), true, "Sphere.jpg");
-
 	trianglePatch = new TrianglePatch();
-	triangleObj = new Object(mainCamera, trianglePatch, program_TriTess, lightManager, glm::vec3(0.0f, 0.0f, -20.0f), true, "Sphere.jpg");
+	quadObj = new Object(mainCamera, trianglePatch, program_QuadTess, lightManager, glm::vec3(-5.0f, 0.0f, -20.0f), true, "Sphere.jpg");
+	triangleObj = new Object(mainCamera, trianglePatch, program_TriTess, lightManager, glm::vec3(5.0f, 0.0f, -20.0f), true, "Sphere.jpg");
 
 	quadMesh = new Quad();
-	screenQuadObj = new Object(mainCamera, quadMesh, program_Inverse, lightManager, glm::vec3(0.0f, 0.0f, -40.0f), true, frameBuffer->GetTexture());
+	screenQuadObj = new Object(mainCamera, quadMesh, program_Greyscale, lightManager, glm::vec3(0.0f, 0.0f, -20.0f), true, frameBuffer->GetTexture());
 
 	bearMesh = new MeshModel("Resources/Models/Bear/", "Bear.obj");
 	bearObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(0.0f, -5.0f, -140.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
+	//geoBearObj = new Object(mainCamera, lightManager, program_GeoVertexNormals, glm::vec3(0.0f, -20.0f, -140.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
+
 
 	dragonMesh = new MeshModel("Resources/Models/Dragon/", "Dragon.obj");
 	dragonObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(-30.0f, -5.0f, -140.0f), "Resources/Models/Dragon/", "Dragon.obj", "Dragon.png", 0);
@@ -286,13 +306,33 @@ void Update()
 	starObj->Update(deltaTime);
 
 	triangleObj->Update(deltaTime);
+	quadObj->Update(deltaTime);
+
 
 	screenQuadObj->Update(deltaTime);
 
 	skyBox->Update(deltaTime);
 	bearObj->Update(deltaTime);
+	//geoBearObj->Update(deltaTime);
 	dragonObj->Update(deltaTime);
 	sphereObj->Update(deltaTime);
+
+	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS)
+	{
+		
+		if (postProcessing == COLOR)
+		{
+			postProcessing = INVERSE;
+		}
+		else if (postProcessing == INVERSE)
+		{
+			postProcessing = GREYSCALE;
+		}
+		else if (postProcessing == GREYSCALE)
+		{
+			postProcessing = COLOR;
+		}
+	}
 }
 
 	
@@ -396,36 +436,50 @@ void ProcessInput(float deltaTime)
 
 
 	
-		float rotation = 0;
+
 void Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	//SCENE 1
-	if (scene1On)
+
+	switch (currentScene)
 	{
+	case SCENE1:
 		skyBox->Render();
 
 		starObj->Render();
-
-	}
-
-	//SCENE 2
-	if (scene2On)
-	{
+		//geoBearObj->Render();
+		break;
+	case SCENE2:
 		skyBox->Render();
 
 		triangleObj->Render();
+		quadObj->Render();
+		break;
+	case SCENE3:
 
-	}
+		switch (postProcessing)
+		{
+		case COLOR:
+			screenQuadObj->SetProgram(program_Texture);
+			break;
+		case INVERSE:
+			screenQuadObj->SetProgram(program_Inverse);
+			break;
+		case GREYSCALE:
+			screenQuadObj->SetProgram(program_Greyscale);
+			break;
+		case RAIN:
+			screenQuadObj->SetProgram(program_Rain);
+			break;
+		default:
+			break;
+		}
 
-	//SCENE 3
-	if (scene3On)
-	{
 		frameBuffer->Bind();
 
 		skyBox->Render();
@@ -437,65 +491,44 @@ void Render()
 
 
 		screenQuadObj->Render();
+		break;
+	default:
+		break;
 	}
-
 
 	//ImGui Scene Control
 	ImGui::Begin("Control Menu");
 	if (ImGui::Button("Scene 1") || glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		scene1On = false;
-		scene2On = false;
-		scene3On = false;
-
-
-		if (scene1On == false)
-		{
-			scene1On = true;
-		}
-		else
-		{
-
-			scene1On = false;
-
-		}
+		currentScene = SCENE1;
 	}
 	if (ImGui::Button("Scene 2") || glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
 	{
-		scene1On = false;
-		scene2On = false;
-		scene3On = false;
 
+		currentScene = SCENE2;
 
-		if (scene2On == false)
-		{
-			scene2On = true;
-		}
-		else
-		{
-
-			scene2On = false;
-
-		}
 	}
 	if (ImGui::Button("Scene 3") || glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		scene1On = false;
-		scene2On = false;
-		scene3On = false;
-
-
-		if (scene3On == false)
-		{
-			scene3On = true;
-		}
-		else
-		{
-
-			scene3On = false;
-
-		}
+			currentScene = SCENE3;
 	}
+	if (ImGui::Button("Color"))
+	{
+		postProcessing = COLOR;
+	}
+	if (ImGui::Button("Inverse"))
+	{
+		postProcessing = INVERSE;
+	}
+	if (ImGui::Button("Greyscale"))
+	{
+		postProcessing = GREYSCALE;
+	}
+	if (ImGui::Button("Rain"))
+	{
+		postProcessing = RAIN;
+	}
+
 
 	ImGui::Checkbox("Wireframe Mode", &wireframeMode);
 

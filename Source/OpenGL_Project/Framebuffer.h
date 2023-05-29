@@ -19,8 +19,6 @@ public:
 	Framebuffer();
 	~Framebuffer();
 
-	GLuint CreateTexture(std::string _fileName);
-
 	void Bind();
 	void Unbind();
 	GLuint GetTexture();

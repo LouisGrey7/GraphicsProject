@@ -8,7 +8,8 @@
 	in vec2 FragTexCoords;
 	in vec3 FragNormal;
 	in vec3 FragPos;
-		//Light Struct
+
+	//Light Struct
 	struct PointLight
 	{
 		vec3 Position;
@@ -19,6 +20,7 @@
 		float AttenuationLinear;
 		float AttenuationExponent;
 	}; 
+
 	// Uniform Inputs
 	uniform sampler2D ImageTexture0;
 	uniform vec3 CameraPos;	
@@ -42,7 +44,7 @@
 			LightOutput += CalculateLight_Point(PointLights[i]);
 		}
 		// Calculate the final color
-		FinalColor = vec4(LightOutput, 1.0f) * texture(ImageTexture0, FragTexCoords);
+		FinalColor =  vec4(LightOutput, 1.0f) * texture(ImageTexture0, FragTexCoords);
 	}
 
 	vec3 CalculateLight_Point(PointLight light)
