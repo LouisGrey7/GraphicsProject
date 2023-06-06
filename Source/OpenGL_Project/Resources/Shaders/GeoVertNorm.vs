@@ -21,7 +21,9 @@ void main()
 
 	gl_Position = PVM * vec4(Position, 1.0f);
 
-
 	vs_out.Position = gl_Position;
+	vs_out.FragTexCoords = TexCoords;
 	vs_out.Normal = mat3(transpose(inverse(Model))) * Normal;
+
+
 }

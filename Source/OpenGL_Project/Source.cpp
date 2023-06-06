@@ -1,3 +1,14 @@
+// Bachelor of Software Engineering
+// Media Design School
+// Auckland
+// New Zealand
+//
+// (c) Media Design School
+//
+// File Name : main.cpp
+// Description : Runs the program
+// Author : Louis
+// Mail : Louis.Grey@mds.ac.nz
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -7,7 +18,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-
 #include <glew.h>
 #include <glfw3.h>
 #include <iostream>
@@ -16,7 +26,6 @@
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
-
 
 #include "ShaderLoader.h"
 #include "TextLabel.h"
@@ -58,13 +67,13 @@ GLuint program_BlinnPhong;
 GLuint program_SkyBox;
 GLuint program_GeoVertex;
 GLuint program_GeoVertexNormals;
+GLuint program_GeoVertexExplode;
 GLuint program_QuadTess;
 GLuint program_TriTess;
 GLuint program_Inverse;
 GLuint program_Greyscale;
 GLuint program_Rain;
-
-
+GLuint program_CRT;
 
 
 //Cameras
@@ -91,11 +100,11 @@ Sphere* sphereMesh;
 
 //Objects
 Object* starObj;
-Object* quadObj;
 Object* triangleObj;
 Object* screenQuadObj;
 Object* bearObj;
 Object* geoBearObj;
+Object* explodeBearObj;
 Object* dragonObj;
 Object* sphereObj;
 
@@ -105,7 +114,8 @@ enum PostProcessing
 	COLOR,
 	INVERSE,
 	GREYSCALE,
-	RAIN
+	RAIN,
+	CRT
 };
 
 enum CurrentScene
@@ -117,7 +127,7 @@ enum CurrentScene
 
 };
 
-PostProcessing postProcessing;
+PostProcessing postProcessing = COLOR;
 CurrentScene currentScene = SCENE1;
 
 int main()
@@ -191,9 +201,6 @@ void InitialSetup()
 	// Maps the range of the window size
 	glViewport(0, 0, Utils::WindowWidth, Utils::WindowHeight);
 
-	// Enable Culling for 3D efficiency
-
-
 	// Enable Depth testing for 3D
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -219,6 +226,9 @@ void InitialSetup()
 	program_Rain = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
 													"Resources/Shaders/Rain.fs");
 
+	program_CRT = ShaderLoader::CreateProgram("Resources/Shaders/3D_Normals.vs",
+											   "Resources/Shaders/CRT.fs");
+
 	program_SkyBox = ShaderLoader::CreateProgram("Resources/Shaders/SkyBox.vs",
 												 "Resources/Shaders/SkyBox.fs");
 
@@ -226,9 +236,13 @@ void InitialSetup()
 													   "Resources/Shaders/Star.gs",
 													   "Resources/Shaders/Texture.fs");
 
-	//program_GeoVertexNormals = ShaderLoader::CreateProgramVGF("Resources/Shaders/GeoVertNorm.vs",
-															  //"Resources/Shaders/ModelGeo.gs",
-														      //"Resources/Shaders/Texture.fs");
+	program_GeoVertexNormals = ShaderLoader::CreateProgramVGF("Resources/Shaders/GeoVertNorm.vs",
+															  "Resources/Shaders/ModelGeo.gs",
+														      "Resources/Shaders/Outline.fs");
+
+	program_GeoVertexExplode = ShaderLoader::CreateProgramVGF("Resources/Shaders/GeoVertNorm.vs",
+															  "Resources/Shaders/ExplodeGeo.gs",
+															  "Resources/Shaders/Texture.fs");
 
 	program_QuadTess = ShaderLoader::CreateProgramVTF("Resources/Shaders/PositionOnly.vs",
 														"Resources/Shaders/TCS.tcs",
@@ -243,7 +257,7 @@ void InitialSetup()
 	// DELTATIME
 	previousTimeStep = (float)glfwGetTime();
 
-	// Keep the default cursor visibility
+	// CURSOR
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	
 	// CAMERA
@@ -264,22 +278,20 @@ void InitialSetup()
 	pointMesh = new PointMesh();
 	starObj = new Object(mainCamera, pointMesh, program_GeoVertex, lightManager, glm::vec3(-800.0f, 0.0f, -2400.0f), true, "Sphere.jpg");
 
-	quadPatch = new QuadPatch();
+
 	trianglePatch = new TrianglePatch();
-	quadObj = new Object(mainCamera, trianglePatch, program_QuadTess, lightManager, glm::vec3(-5.0f, 0.0f, -20.0f), true, "Sphere.jpg");
-	triangleObj = new Object(mainCamera, trianglePatch, program_TriTess, lightManager, glm::vec3(5.0f, 0.0f, -20.0f), true, "Sphere.jpg");
+	triangleObj = new Object(mainCamera, trianglePatch, program_TriTess, lightManager, glm::vec3(0.0f, 0.0f, -20.0f), true, "Sphere.jpg");
 
 	quadMesh = new Quad();
 	screenQuadObj = new Object(mainCamera, quadMesh, program_Greyscale, lightManager, glm::vec3(0.0f, 0.0f, -20.0f), true, frameBuffer->GetTexture());
 
 	bearMesh = new MeshModel("Resources/Models/Bear/", "Bear.obj");
 	bearObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(0.0f, -5.0f, -140.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
-	//geoBearObj = new Object(mainCamera, lightManager, program_GeoVertexNormals, glm::vec3(0.0f, -20.0f, -140.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
-
+	geoBearObj = new Object(mainCamera, lightManager, program_GeoVertexNormals, glm::vec3(12.0f, 5.0f, -70.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
+	explodeBearObj = new Object(mainCamera, lightManager, program_GeoVertexExplode, glm::vec3(-12.0f, 5.0f, -70.0f), "Resources/Models/Bear/", "Bear.obj", "Bear.png", 0);
 
 	dragonMesh = new MeshModel("Resources/Models/Dragon/", "Dragon.obj");
 	dragonObj = new Object(mainCamera, lightManager, program_BlinnPhong, glm::vec3(-30.0f, -5.0f, -140.0f), "Resources/Models/Dragon/", "Dragon.obj", "Dragon.png", 0);
-
 
 	sphereMesh = new Sphere(3.0f, 100.0f);
 	sphereObj = new Object(mainCamera, sphereMesh, program_BlinnPhong, lightManager, glm::vec3(30.0f, -5.0f, -140.0f), true, "Sphere.jpg");
@@ -306,14 +318,14 @@ void Update()
 	starObj->Update(deltaTime);
 
 	triangleObj->Update(deltaTime);
-	quadObj->Update(deltaTime);
 
 
 	screenQuadObj->Update(deltaTime);
 
 	skyBox->Update(deltaTime);
 	bearObj->Update(deltaTime);
-	//geoBearObj->Update(deltaTime);
+	geoBearObj->Update(deltaTime);
+	explodeBearObj->Update(deltaTime);
 	dragonObj->Update(deltaTime);
 	sphereObj->Update(deltaTime);
 
@@ -329,6 +341,14 @@ void Update()
 			postProcessing = GREYSCALE;
 		}
 		else if (postProcessing == GREYSCALE)
+		{
+			postProcessing = RAIN;
+		}
+		else if (postProcessing == RAIN)
+		{
+			postProcessing = CRT;
+		}
+		else if (postProcessing == CRT)
 		{
 			postProcessing = COLOR;
 		}
@@ -434,9 +454,6 @@ void ProcessInput(float deltaTime)
 }
 
 
-
-	
-
 void Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -452,13 +469,19 @@ void Render()
 		skyBox->Render();
 
 		starObj->Render();
-		//geoBearObj->Render();
+
+		geoBearObj->SetProgram(program_Texture);
+		geoBearObj->Render();
+		geoBearObj->SetProgram(program_GeoVertexNormals);
+		geoBearObj->Render();
+
+		explodeBearObj->Render();
+
 		break;
 	case SCENE2:
 		skyBox->Render();
 
 		triangleObj->Render();
-		quadObj->Render();
 		break;
 	case SCENE3:
 
@@ -476,6 +499,9 @@ void Render()
 		case RAIN:
 			screenQuadObj->SetProgram(program_Rain);
 			break;
+		case CRT:
+			screenQuadObj->SetProgram(program_CRT);
+			break;
 		default:
 			break;
 		}
@@ -488,7 +514,6 @@ void Render()
 		sphereObj->Render();
 
 		frameBuffer->Unbind();
-
 
 		screenQuadObj->Render();
 		break;
@@ -510,7 +535,7 @@ void Render()
 	}
 	if (ImGui::Button("Scene 3") || glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-			currentScene = SCENE3;
+		currentScene = SCENE3;
 	}
 	if (ImGui::Button("Color"))
 	{
@@ -528,6 +553,10 @@ void Render()
 	{
 		postProcessing = RAIN;
 	}
+	if (ImGui::Button("CRT"))
+	{
+		postProcessing = CRT;
+	}
 
 
 	ImGui::Checkbox("Wireframe Mode", &wireframeMode);
@@ -541,12 +570,7 @@ void Render()
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-
-
 	}
-	
-	ImGui::Text("C = Toggle Cursor");
-	ImGui::Text("WASDQE = Camera Movement");
 
 
 	ImGui::End();

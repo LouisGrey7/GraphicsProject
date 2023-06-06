@@ -1,2 +1,5 @@
-﻿  Object.cpp
+﻿  Source.cpp
+C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\OpenGL_Project\Source.cpp(296,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\OpenGL_Project\Source.cpp(369,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\OpenGL_Project\Source.cpp(370,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   OpenGL_Project.vcxproj -> C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\Debug\OpenGL_Project.exe

@@ -5,7 +5,7 @@
 
     // Uniform Inputs
     uniform sampler2D ImageTexture;
-    uniform sampler2D ImageTexture2;
+    uniform float Time;
 
 
     // Output
@@ -14,10 +14,10 @@
     void main()
     {
 
-	    vec3 uv = vec3(FragTexCoords.x / 800, FragTexCoords.y / 800, 1.0f);
-	    float time = 1.0f;
+	    vec2 uv = FragTexCoords.xy;
+	    float time = Time;
 	    vec3 raintex = texture(ImageTexture, vec2(uv.x * 2.0, uv.y * 0.1 + time * 0.125)).rgb / 8.0;
-	    vec3 where = vec3(uv.x - raintex.x, uv.y - raintex.y, 1.0f);
+	    vec2 where = (uv.xy - raintex.xy);
 	    vec3 texture = texture(ImageTexture, vec2(where.x, where.y)).rgb;
 
 

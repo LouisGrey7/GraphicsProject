@@ -1,8 +1,12 @@
 #version 460 core
 
 layout (triangles, equal_spacing, ccw) in;
+in vec2 FragTextureCoords[];
 
 uniform mat4 PVM;
+
+out vec2 FragTexCoords[];
+
 
 void main()
 {
@@ -14,5 +18,4 @@ void main()
 
 
 	gl_Position = PVM * Pos;
-
 }

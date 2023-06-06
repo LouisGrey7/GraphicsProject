@@ -110,6 +110,10 @@ void Object::Render()
 	GLint modelLoc = glGetUniformLocation(m_program, "Model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(m_matModel));
 	
+
+	glUniform1f(glGetUniformLocation(m_program, "Time"), (float)glfwGetTime());
+
+
 	switch (m_programMode)
 	{
 		case ProgramMode::BLINNPHONGRIM:

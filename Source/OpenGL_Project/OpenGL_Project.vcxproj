@@ -182,6 +182,8 @@
     <ClCompile Include="TrianglePatch.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Shaders\CRT.fs" />
+    <None Include="Resources\Shaders\ExplodeGeo.gs" />
     <None Include="Resources\Shaders\GeoVertex.vs" />
     <None Include="Resources\Shaders\3DTexture.fs" />
     <None Include="Resources\Shaders\3DTexture.vs" />
@@ -210,6 +212,7 @@
     <None Include="Resources\Shaders\Star.gs" />
     <None Include="Resources\Shaders\TCS.tcs" />
     <None Include="Resources\Shaders\TES.tes" />
+    <None Include="Resources\Shaders\TessTexture.fs" />
     <None Include="Resources\Shaders\Text.fs" />
     <None Include="Resources\Shaders\Text.vs" />
     <None Include="Resources\Shaders\Texture.fs" />

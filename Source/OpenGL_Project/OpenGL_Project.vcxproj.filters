@@ -212,6 +212,9 @@
     <None Include="Resources\Shaders\Rain.fs">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="Resources\Shaders\TessTexture.fs" />
+    <None Include="Resources\Shaders\CRT.fs" />
+    <None Include="Resources\Shaders\ExplodeGeo.gs" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ShaderLoader.h">

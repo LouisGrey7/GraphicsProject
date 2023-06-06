@@ -1,9 +1,10 @@
 ﻿  Source.cpp
-C:\Users\The GOLIATH\Downloads\LouisGrey - OpenGLProject\Source\OpenGL_Project\Source.cpp(309,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\The GOLIATH\Downloads\LouisGrey - OpenGLProject\Source\OpenGL_Project\Source.cpp(310,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\OpenGL_Project\Source.cpp(296,32): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\OpenGL_Project\Source.cpp(369,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\OpenGL_Project\Source.cpp(370,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Generating code
-  164 of 3300 functions ( 5.0%) were compiled, the rest were copied from previous compilation.
+  2 of 3265 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    107 functions had inline decision re-evaluated but remain unchanged
+    24 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  OpenGL_Project.vcxproj -> C:\Users\The GOLIATH\Downloads\LouisGrey - OpenGLProject\Source\Release\OpenGL_Project.exe
+  OpenGL_Project.vcxproj -> C:\Users\The GOLIATH\OneDrive\Documents\Projects\3D Graphics\LouisGrey - OpenGLProject-Assignment2\GraphicsProject\Source\Release\OpenGL_Project.exe

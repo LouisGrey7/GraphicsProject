@@ -10,12 +10,20 @@ struct VertexPoint
 
 public:
 	glm::vec3 Position;
+	glm::vec2 TextureCoords;
+
 
 	VertexPoint() {};
 	VertexPoint(glm::vec3 _pos)
 	{
 		Position = _pos;
 
+
+	}
+	VertexPoint(glm::vec3 _pos, glm:: vec2 _tex)
+	{
+		Position = _pos;
+		TextureCoords = _tex;
 
 	}
 
